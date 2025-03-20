@@ -24,12 +24,22 @@ namespace PL.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Signin(RegisterationUserAR userAccount )
         {
+            
             if (ModelState.IsValid)
             {
                 ApplicationUser userModel = new ApplicationUser() { UserName = userAccount.UserName, Email = userAccount.Email, PasswordHash = userAccount.Password, PhoneNumber = userAccount.PhoneNumber };
                 IdentityResult result =await _userManager.CreateAsync(userModel,userAccount.Password);
                 if (result.Succeeded)
                 {
+                    if (userModel.UserName == "Admin")
+                    {
+                        await _userManager.AddToRoleAsync(userModel,"Admin");
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(userModel, userAccount.Role);
+                    }
+                       
                     await _signInManager.SignInAsync(userModel, false);
                     return RedirectToAction("Index","Product");
                 }

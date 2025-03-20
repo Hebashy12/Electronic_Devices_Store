@@ -1,6 +1,7 @@
 ﻿using BLL.DTOs;
 using BLL.Services.Absraction;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PL.ActionResults;
 using PL.ConvertIntoVM;
@@ -23,12 +24,14 @@ namespace PL.Controllers
             var result = prducts.FromListDTOToVM();
             return View(result);
         }
+        [Authorize(Roles ="Buyer")]
         public async Task<IActionResult> Create()
         {
             ViewBag.category =await _categoryServices.GetAll();
             return View();
         }
         [HttpPost]
+        [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> Create(ProductAR newProduct)
         {
             ViewBag.category = await _categoryServices.GetAll();
@@ -41,13 +44,15 @@ namespace PL.Controllers
            
             return View(newProduct);
         }
-         public async Task<IActionResult> Edit(int id)
+        [Authorize(Roles = "Buyer")]
+        public async Task<IActionResult> Edit(int id)
         {
             var dto = await _productServices.GetbyId(id);
             var AR = new ProductAR { Name = dto.Name, Description = dto.Description, Category = dto.Category, CategoryId = dto.CategoryId, ImageUrl= dto.ImageUrl, Price = dto.Price };
             return View(AR);
         }
         [HttpPost]
+        [Authorize(Roles = "Buyer")]
         public async Task<IActionResult> Edit(int id, ProductAR productAR)
         {
             if (ModelState.IsValid)
@@ -58,6 +63,7 @@ namespace PL.Controllers
             }
             return View(productAR);
         }
+        [Authorize(Roles = "Buyer,Admin")]
         public async Task<IActionResult> Delete(int id)
         {
            await _productServices.Delete(id);

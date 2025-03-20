@@ -7,7 +7,7 @@ using PL.VMs;
 
 namespace PL.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryServices _categoryServices;
