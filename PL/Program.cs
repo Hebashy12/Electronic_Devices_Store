@@ -4,6 +4,8 @@ using DAL.Reposatory.Abstraction;
 using DAL.Reposatory.Implementation;
 using BLL.Services.Absraction;
 using BLL.Services.Implementation;
+using Microsoft.AspNetCore.Identity;
+using DAL.Entities;
 namespace PL
 {
     public class Program
@@ -14,11 +16,15 @@ namespace PL
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            
+
             builder.Services.AddDbContext<ApplicationDbContext>(optionBuilder =>
             {
                 optionBuilder.UseSqlServer(builder.Configuration.GetConnectionString("projectConnectionString"));
             });
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option => {
+            option.Password.RequireUppercase = false;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddScoped<IProductRepo, ProductRepo>();
             builder.Services.AddScoped<IProductServices, ProductServices>();
             builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
@@ -39,6 +45,7 @@ namespace PL
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

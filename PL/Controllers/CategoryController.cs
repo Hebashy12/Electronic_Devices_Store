@@ -1,11 +1,13 @@
 ﻿using BLL.Services.Absraction;
 using BLL.Services.Implementation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PL.ActionResults;
 using PL.VMs;
 
 namespace PL.Controllers
 {
+    [Authorize]
     public class CategoryController : Controller
     {
         private readonly ICategoryServices _categoryServices;
